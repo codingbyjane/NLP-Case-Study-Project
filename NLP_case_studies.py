@@ -46,9 +46,9 @@ def three_sentence_summary(text):
 # Generate a baseline summary and store it in the dictionary
 summaries["baseline"] = three_sentence_summary(sample_set)
 
+
 # Use PlainTextParser to parse the sample text
 parser = PlaintextParser.from_string(sample_set, Tokenizer("english"))
-
 
 # Initialize the TextRank summarizer  
 summarizer = TextRankSummarizer()  
@@ -61,3 +61,18 @@ for sentence in summarizer(parser.document, 5):
     summary_sentences.append(str(sentence))
 
 summaries["sumy"] = "\n".join(summary_sentences)
+
+# GPT2 summary
+# Set the random seed for reproducibility
+set_seed(42)
+
+# Initialize a text generation pipeline with the GPT-2 XL model
+pipe = pipeline("text-generation", model="gpt2-xl")
+
+# Create a query for the GPT-2 model 
+query = sample_set + "\nTl;DR:\n"
+
+# Generate a summary using the GPT-2 model
+pipe_out = pipe(query, max_new_tokens=1000, cleanup_tokenization_spaces=True)
+
+summaries["gpt2"] = "\n".join(sent_tokenize(pipe_out[0]['generated_text'][len(query):]))
