@@ -122,4 +122,7 @@ for model_name in summaries: # Iterate over the generated summaries
     rouge_dict = dict((rn, score[rn].mid.fmeasure) for rn in rouge_versions)  # Extract the mid f-measure scores for each ROUGE version
     records.append(rouge_dict)  # Append the scores to the records list
 
-pd.DataFrame.from_records(records, index=summaries.keys())  # Create a DataFrame from the records for better visualization
+ROUGE_df = pd.DataFrame.from_records(records, index=summaries.keys())  # Create a DataFrame from the records for better visualization
+# print(ROUGE_df)
+
+ROUGE_df.to_csv("rouge_results.csv")
