@@ -1,5 +1,3 @@
-# Created by venv; see https://docs.python.org/3/library/venv.html
-
 # Virtual environment
 .nlp_env/
 
@@ -12,5 +10,5 @@ __pycache__/
 # VS Code
 .vscode/
 
-# MacOS
+# macOS
 .DS_Store
