@@ -108,7 +108,7 @@ summaries["bart"] = '\n'.join(sent_tokenize(pipe_out[0["summary_text"]]))
 
 # Results evaluation with ROUGE metric
 # Load the ROUGE metric from the evaluate library
-rouge_metric = load_metric("rouge")
+rouge_metric = evaluate.load("rouge") # the load_metric method is deprecated, so we use evaluate.load instead
 
 reference = dataset["train"][0]["highlight"]  # The reference summary for the first article in the training set
 
