@@ -2,7 +2,8 @@
 import nltk 
 
 # Download the 'punkt' tokenizer models from NLTK 
-nltk.download("punkt") 
+nltk.download("punkt")
+nltk.download("punkt_tab")
 
 # Import the sentence tokenizer from NLTK 
 from nltk.tokenize import sent_tokenize
@@ -38,6 +39,7 @@ sample_set = dataset['train'][0]['document'][:2000] # “Take the first 2000 cha
 # Initialize an empty dictionary to store summaries
 summaries = {}  
 
+# Baseline summary
 # Define a function to generate a three-sentence summary
 def three_sentence_summary(text):
     # Return the first three sentences of the text
@@ -45,8 +47,10 @@ def three_sentence_summary(text):
 
 # Generate a baseline summary and store it in the dictionary
 summaries["baseline"] = three_sentence_summary(sample_set)
+#print(summaries["baseline"])
 
 
+# Sumy TextRank summary
 # Use PlainTextParser to parse the sample text
 parser = PlaintextParser.from_string(sample_set, Tokenizer("english"))
 
@@ -62,6 +66,7 @@ for sentence in summarizer(parser.document, 5):
 
 summaries["sumy"] = "\n".join(summary_sentences)
 
+
 # GPT2 summary
 # Set the random seed for reproducibility
 set_seed(42)
@@ -76,3 +81,19 @@ query = sample_set + "\nTl;DR:\n"
 pipe_out = pipe(query, max_new_tokens=1000, cleanup_tokenization_spaces=True)
 
 summaries["gpt2"] = "\n".join(sent_tokenize(pipe_out[0]['generated_text'][len(query):]))
+
+#print(summaries["gpt2"])
+
+
+# DeepSeek summary
+model_name = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
+
+# Set the random seed for reproducibility
+set_seed(42)
+
+pipe = pipeline('text-generation', model=model_name)
+query = sample_set + "\nTl;DR:\n"
+
+pipe_out = pipe(query, max_bew_tokens=1000, cleanup_tokenization_spaces=True)
+
+summaries["deepseek"] = "\n".join(sent_tokenize(pipe_out[0]['generated_text'][len(query):]))
