@@ -97,3 +97,29 @@ query = sample_set + "\nTl;DR:\n"
 pipe_out = pipe(query, max_bew_tokens=1000, cleanup_tokenization_spaces=True)
 
 summaries["deepseek"] = "\n".join(sent_tokenize(pipe_out[0]['generated_text'][len(query):]))
+
+
+# BART summary
+pipe = pipeline("summarization", model="facebook/bart-large-cnn") # fine-tuned on CNN/DailyMail summarization
+pipe_out = pipe(sample_set)
+
+summaries["bart"] = '\n'.join(sent_tokenize(pipe_out[0["summary_text"]]))
+
+
+# Results evaluation with ROUGE metric
+# Load the ROUGE metric from the evaluate library
+rouge_metric = load_metric("rouge")
+
+reference = dataset["train"][0]["highlight"]  # The reference summary for the first article in the training set
+
+records = []  # Initialize an empty list to store evaluation records
+rouge_versions = ["rouge1", "rouge2", "rougeL", "rougeLsum"]  # List of ROUGE metric versions to evaluate
+
+for model_name in summaries: # Iterate over the generated summaries
+    rouge_metric.add(prediction=summaries[model_name], reference=reference)  # Add the generated summary and reference summary to the metric
+    score = rouge_metric.compute()  # Compute the ROUGE scores
+
+    rouge_dict = dict((rn, score[rn].mid.fmeasure) for rn in rouge_versions)  # Extract the mid f-measure scores for each ROUGE version
+    records.append(rouge_dict)  # Append the scores to the records list
+
+pd.DataFrame.from_records(records, index=summaries.keys())  # Create a DataFrame from the records for better visualization
