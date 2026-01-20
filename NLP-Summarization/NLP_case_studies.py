@@ -125,4 +125,4 @@ for model_name in summaries: # Iterate over the generated summaries
 ROUGE_df = pd.DataFrame.from_records(records, index=summaries.keys())  # Create a DataFrame from the records for better visualization
 # print(ROUGE_df)
 
-ROUGE_df.to_csv("rouge_results.csv")
+ROUGE_df.to_csv("rouge_results.csv") # Save the ROUGE evaluation results to a CSV file
