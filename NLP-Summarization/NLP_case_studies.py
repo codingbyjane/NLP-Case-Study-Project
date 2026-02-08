@@ -3,7 +3,8 @@ import nltk
 
 # Download the 'punkt' tokenizer models from NLTK 
 nltk.download("punkt")
-nltk.download("punkt_tab")
+
+# nltk.download("punkt_tab") -> does not exist, so we only download "punkt" which is used for sentence tokenization
 
 # Import the sentence tokenizer from NLTK 
 from nltk.tokenize import sent_tokenize
