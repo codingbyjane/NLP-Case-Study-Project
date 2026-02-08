@@ -40,6 +40,7 @@ sample_set = dataset['train'][0]['document'][:2000] # “Take the first 2000 cha
 # Initialize an empty dictionary to store summaries
 summaries = {}  
 
+
 # Baseline summary
 # Define a function to generate a three-sentence summary
 def three_sentence_summary(text):
@@ -49,6 +50,7 @@ def three_sentence_summary(text):
 # Generate a baseline summary and store it in the dictionary
 summaries["baseline"] = three_sentence_summary(sample_set)
 #print(summaries["baseline"])
+
 
 
 # Sumy TextRank summary
@@ -66,6 +68,7 @@ for sentence in summarizer(parser.document, 5):
     summary_sentences.append(str(sentence))
 
 summaries["sumy"] = "\n".join(summary_sentences)
+
 
 
 # GPT2 summary
@@ -86,6 +89,7 @@ summaries["gpt2"] = "\n".join(sent_tokenize(pipe_out[0]['generated_text'][len(qu
 #print(summaries["gpt2"])
 
 
+
 # DeepSeek summary
 model_name = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
 
@@ -95,16 +99,18 @@ set_seed(42)
 pipe = pipeline('text-generation', model=model_name)
 query = sample_set + "\nTl;DR:\n"
 
-pipe_out = pipe(query, max_bew_tokens=1000, cleanup_tokenization_spaces=True)
+pipe_out = pipe(query, max_new_tokens=1000, cleanup_tokenization_spaces=True)
 
 summaries["deepseek"] = "\n".join(sent_tokenize(pipe_out[0]['generated_text'][len(query):]))
+
 
 
 # BART summary
 pipe = pipeline("summarization", model="facebook/bart-large-cnn") # fine-tuned on CNN/DailyMail summarization
 pipe_out = pipe(sample_set)
 
-summaries["bart"] = '\n'.join(sent_tokenize(pipe_out[0["summary_text"]]))
+summaries["bart"] = '\n'.join(sent_tokenize(pipe_out[0]["summary_text"]))
+
 
 
 # Results evaluation with ROUGE metric
