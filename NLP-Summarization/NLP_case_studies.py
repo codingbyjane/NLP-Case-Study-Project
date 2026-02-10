@@ -76,19 +76,19 @@ summaries["sumy"] = "\n".join(summary_sentences)
 # Set the random seed for reproducibility
 set_seed(42)
 
-# Initialize a text generation pipeline with the GPT-2 XL model
-pipe = pipeline("text-generation", model="gpt2-xl")
+# Initialize a text generation pipeline with the GPT-2 XL model model and its tokenizer
+gpt2_pipe = pipeline("text-generation", model="gpt2-xl")
 
 # Create a query for the GPT-2 model 
 query = sample_set + "\nTl;DR:\n"
 
 # Generate a summary using the GPT-2 model
-pipe_out = pipe(query, max_new_tokens=300) # removed cleanup_tokenization_spaces=True because it is not a valid argument for the text-generation pipeline
+pipe_out = gpt2_pipe(query, max_new_tokens=300) # removed cleanup_tokenization_spaces=True because it is not a valid argument for the text-generation pipeline
 
 generated_text = pipe_out[0]['generated_text'][len(query):].strip()  # Extract the generated summary text by removing the original query from the output
 generated_text = " ".join(generated_text.split())  # Clean up extra whitespace in the generated text
 
-summaries["gpt2"] = "\n".join(sent_tokenize(pipe_out[0]['generated_text'][len(query):]))
+summaries["gpt2"] = "\n".join(sent_tokenize(generated_text))
 
 #print(summaries["gpt2"])
 
@@ -100,10 +100,10 @@ model_name = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
 # Set the random seed for reproducibility
 set_seed(42)
 
-pipe = pipeline('text-generation', model=model_name)
+deppseek_pipe = pipeline('text-generation', model=model_name)
 query = sample_set + "\nTl;DR:\n"
 
-pipe_out = pipe(query, max_new_tokens=300) # removed cleanup_tokenization_spaces=True because it is not a valid argument for the text-generation pipeline
+pipe_out = deppseek_pipe(query, max_new_tokens=300) # removed cleanup_tokenization_spaces=True because it is not a valid argument for the text-generation pipeline
 
 generated_text = pipe_out[0]['generated_text'][len(query):].strip()  # Extract the generated summary text by removing the original query from the output
 generated_text = " ".join(generated_text.split())  # Clean up extra whitespace in the generated text
@@ -113,8 +113,8 @@ summaries["deepseek"] = "\n".join(sent_tokenize(generated_text))
 
 
 # BART summary
-pipe = pipeline("summarization", model="facebook/bart-large-cnn") # fine-tuned on CNN/DailyMail summarization
-pipe_out = pipe(sample_set)
+bart_pipe = pipeline("summarization", model="facebook/bart-large-cnn") # fine-tuned on CNN/DailyMail summarization
+pipe_out = bart_pipe(sample_set)
 
 summaries["bart"] = '\n'.join(sent_tokenize(pipe_out[0]["summary_text"]))
 
