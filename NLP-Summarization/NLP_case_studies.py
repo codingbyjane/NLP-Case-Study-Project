@@ -49,7 +49,8 @@ def three_sentence_summary(text):
 
 # Generate a baseline summary and store it in the dictionary
 summaries["baseline"] = three_sentence_summary(sample_set)
-#print(summaries["baseline"])
+
+print(summaries["baseline"])
 
 
 
@@ -82,7 +83,7 @@ pipe = pipeline("text-generation", model="gpt2-xl")
 query = sample_set + "\nTl;DR:\n"
 
 # Generate a summary using the GPT-2 model
-pipe_out = pipe(query, max_new_tokens=1000) # removed cleanup_tokenization_spaces=True because it is not a valid argument for the text-generation pipeline
+pipe_out = pipe(query, max_new_tokens=300) # removed cleanup_tokenization_spaces=True because it is not a valid argument for the text-generation pipeline
 
 generated_text = pipe_out[0]['generated_text'][len(query):].strip()  # Extract the generated summary text by removing the original query from the output
 generated_text = " ".join(generated_text.split())  # Clean up extra whitespace in the generated text
@@ -102,9 +103,12 @@ set_seed(42)
 pipe = pipeline('text-generation', model=model_name)
 query = sample_set + "\nTl;DR:\n"
 
-pipe_out = pipe(query, max_new_tokens=1000, cleanup_tokenization_spaces=True)
+pipe_out = pipe(query, max_new_tokens=300) # removed cleanup_tokenization_spaces=True because it is not a valid argument for the text-generation pipeline
 
-summaries["deepseek"] = "\n".join(sent_tokenize(pipe_out[0]['generated_text'][len(query):]))
+generated_text = pipe_out[0]['generated_text'][len(query):].strip()  # Extract the generated summary text by removing the original query from the output
+generated_text = " ".join(generated_text.split())  # Clean up extra whitespace in the generated text
+
+summaries["deepseek"] = "\n".join(sent_tokenize(generated_text))
 
 
 
