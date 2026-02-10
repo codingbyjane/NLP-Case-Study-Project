@@ -100,10 +100,10 @@ model_name = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
 # Set the random seed for reproducibility
 set_seed(42)
 
-deppseek_pipe = pipeline('text-generation', model=model_name)
+deepseek_pipe = pipeline('text-generation', model=model_name, trust_remote_code=True) # trust_remote_code is required for some models that have custom code on the Huggingface Hub
 query = sample_set + "\nTl;DR:\n"
 
-pipe_out = deppseek_pipe(query, max_new_tokens=300) # removed cleanup_tokenization_spaces=True because it is not a valid argument for the text-generation pipeline
+pipe_out = deepseek_pipe(query, max_new_tokens=300) # removed cleanup_tokenization_spaces=True because it is not a valid argument for the text-generation pipeline
 
 generated_text = pipe_out[0]['generated_text'][len(query):].strip()  # Extract the generated summary text by removing the original query from the output
 generated_text = " ".join(generated_text.split())  # Clean up extra whitespace in the generated text
@@ -114,7 +114,7 @@ summaries["deepseek"] = "\n".join(sent_tokenize(generated_text))
 
 # BART summary
 bart_pipe = pipeline("summarization", model="facebook/bart-large-cnn") # fine-tuned on CNN/DailyMail summarization
-pipe_out = bart_pipe(sample_set)
+pipe_out = bart_pipe(sample_set, max_length=150, min_length=40, do_sample=False)
 
 summaries["bart"] = '\n'.join(sent_tokenize(pipe_out[0]["summary_text"]))
 
