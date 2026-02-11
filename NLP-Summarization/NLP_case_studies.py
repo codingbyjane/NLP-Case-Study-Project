@@ -95,7 +95,7 @@ generated_text = " ".join(generated_text.split())  # Clean up extra whitespace i
 
 summaries["gpt2"] = "\n".join(sent_tokenize(generated_text))
 
-#print(summaries["gpt2"])
+print(summaries["gpt2"])
 
 
 
@@ -105,7 +105,7 @@ model_name = "deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"
 # Set the random seed for reproducibility
 set_seed(42)
 
-deepseek_pipe = pipeline('text-generation', model=model_name, trust_remote_code=True) # trust_remote_code is required for some models that have custom code on the Huggingface Hub
+deepseek_pipe = pipeline('text-generation', model=model_name, trust_remote_code=True, truncation=True) # trust_remote_code is required for some models that have custom code on the Huggingface Hub
 query = sample_set + "\nTl;DR:\n"
 
 pipe_out = deepseek_pipe(query, max_new_tokens=300) # removed cleanup_tokenization_spaces=True because it is not a valid argument for the text-generation pipeline
@@ -115,6 +115,8 @@ generated_text = " ".join(generated_text.split())  # Clean up extra whitespace i
 
 summaries["deepseek"] = "\n".join(sent_tokenize(generated_text))
 
+print(summaries["deepseek"]) # Display the DeepSeek summary to verify that it is working correctly
+
 
 
 # BART summary
@@ -122,6 +124,8 @@ bart_pipe = pipeline("summarization", model="facebook/bart-large-cnn") # fine-tu
 pipe_out = bart_pipe(sample_set, max_length=150, min_length=40, do_sample=False)
 
 summaries["bart"] = '\n'.join(sent_tokenize(pipe_out[0]["summary_text"]))
+
+print(summaries["bart"]) # Display the BART summary to verify that it is working correctly
 
 
 
