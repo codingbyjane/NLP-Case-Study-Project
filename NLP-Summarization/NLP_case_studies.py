@@ -73,6 +73,8 @@ for sentence in summarizer(parser.document, 5):
 
 summaries["sumy"] = "\n".join(summary_sentences)
 
+print(summaries["sumy"]) # Display the TextRank summary to verify that it is working correctly
+
 
 
 # GPT2 summary
@@ -130,16 +132,23 @@ rouge_metric = evaluate.load("rouge") # the load_metric method is deprecated, so
 reference = dataset["train"][0]["summary"]  # The reference summary for the first article in the training set
 
 records = []  # Initialize an empty list to store evaluation records
+model_names = [] # List to store model names for indexing the DataFrame
+
 rouge_versions = ["rouge1", "rouge2", "rougeL", "rougeLsum"]  # List of ROUGE metric versions to evaluate
 
 for model_name in summaries: # Iterate over the generated summaries
-    rouge_metric.add(prediction=summaries[model_name], reference=reference)  # Add the generated summary and reference summary to the metric
-    score = rouge_metric.compute()  # Compute the ROUGE scores
 
-    rouge_dict = dict((rn, score[rn].mid.fmeasure) for rn in rouge_versions)  # Extract the mid f-measure scores for each ROUGE version
+    score = rouge_metric.compute(predictions=[summaries[model_name]], references=[reference])  # Compute the ROUGE scores for the current summary against the reference summary
+    
+    # Extract the mid f-measure scores for each ROUGE version and store them in a dictionary
+
+    rouge_dict = {rn: score[rn] for rn in rouge_versions}  # Create a dictionary of ROUGE scores for the current model
+
     records.append(rouge_dict)  # Append the scores to the records list
+    model_names.append(model_name)  # Append the model name to the list for indexing
 
-ROUGE_df = pd.DataFrame.from_records(records, index=summaries.keys())  # Create a DataFrame from the records for better visualization
-# print(ROUGE_df)
+ROUGE_df = pd.DataFrame.from_records(records, index=model_names)  # Create a DataFrame from the records for better visualization
+
+print(ROUGE_df)
 
 ROUGE_df.to_csv("rouge_results.csv") # Save the ROUGE evaluation results to a CSV file
