@@ -37,6 +37,9 @@ dataset = load_dataset('xsum')
 # Display the first example from the training set
 sample_set = dataset['train'][0]['document'][:2000] # “Take the first 2000 characters of the text of the first article in the training set and store it in sample_text.”
 
+# Display the keys of the first example in the training set to understand the structure of the dataset
+print(dataset["train"][0].keys())
+
 # Initialize an empty dictionary to store summaries
 summaries = {}  
 
@@ -50,7 +53,7 @@ def three_sentence_summary(text):
 # Generate a baseline summary and store it in the dictionary
 summaries["baseline"] = three_sentence_summary(sample_set)
 
-print(summaries["baseline"])
+print(summaries["baseline"]) # Display the three-sentence baseline summary to verify that it is working correctly
 
 
 
@@ -124,7 +127,7 @@ summaries["bart"] = '\n'.join(sent_tokenize(pipe_out[0]["summary_text"]))
 # Load the ROUGE metric from the evaluate library
 rouge_metric = evaluate.load("rouge") # the load_metric method is deprecated, so we use evaluate.load instead
 
-reference = dataset["train"][0]["highlight"]  # The reference summary for the first article in the training set
+reference = dataset["train"][0]["summary"]  # The reference summary for the first article in the training set
 
 records = []  # Initialize an empty list to store evaluation records
 rouge_versions = ["rouge1", "rouge2", "rougeL", "rougeLsum"]  # List of ROUGE metric versions to evaluate
