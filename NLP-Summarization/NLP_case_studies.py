@@ -53,7 +53,7 @@ def three_sentence_summary(text):
 # Generate a baseline summary and store it in the dictionary
 summaries["baseline"] = three_sentence_summary(sample_set)
 
-print(summaries["baseline"]) # Display the three-sentence baseline summary to verify that it is working correctly
+print(f"Baseline summary: {summaries["baseline"]}\n") # Display the three-sentence baseline summary to verify that it is working correctly
 
 
 
@@ -73,7 +73,7 @@ for sentence in summarizer(parser.document, 5):
 
 summaries["sumy"] = "\n".join(summary_sentences)
 
-print(summaries["sumy"]) # Display the TextRank summary to verify that it is working correctly
+print(f"Sumy TextRank summary: {summaries["sumy"]}\n") # Display the TextRank summary to verify that it is working correctly
 
 
 
@@ -95,7 +95,7 @@ generated_text = " ".join(generated_text.split())  # Clean up extra whitespace i
 
 summaries["gpt2"] = "\n".join(sent_tokenize(generated_text))
 
-print(summaries["gpt2"])
+print(f"GPT-2 summary: {summaries["gpt2"]}\n") # Display the GPT-2 summary to verify that it is working correctly
 
 
 
@@ -115,7 +115,7 @@ generated_text = " ".join(generated_text.split())  # Clean up extra whitespace i
 
 summaries["deepseek"] = "\n".join(sent_tokenize(generated_text))
 
-print(summaries["deepseek"]) # Display the DeepSeek summary to verify that it is working correctly
+print(f"DeepSeek summary: {summaries["deepseek"]}\n") # Display the DeepSeek summary to verify that it is working correctly
 
 
 
@@ -125,7 +125,7 @@ pipe_out = bart_pipe(sample_set, max_length=150, min_length=40, do_sample=False)
 
 summaries["bart"] = '\n'.join(sent_tokenize(pipe_out[0]["summary_text"]))
 
-print(summaries["bart"]) # Display the BART summary to verify that it is working correctly
+print(f"BART summary: {summaries["bart"]}\n") # Display the BART summary to verify that it is working correctly
 
 
 
